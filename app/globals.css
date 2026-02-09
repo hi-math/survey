@@ -1,15 +1,20 @@
+@import "survey-core/survey-core.min.css";
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #1E3A63;
+  --secondary: #6B8EA6;
+  --accent: #F5B963;
+  --neutral: #E0DDD8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-noto-sans: var(--font-noto-sans);
+  --font-nanum-gothic: var(--font-nanum-gothic);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +27,657 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nanum-gothic), sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 헤더 폰트 */
+header {
+  font-family: var(--font-noto-sans), sans-serif;
+}
+
+/* SurveyJS 폰트 사이즈 및 폰트 조정 */
+.sv-root-modern {
+  font-size: 13px;
+  font-family: var(--font-nanum-gothic), sans-serif;
+}
+
+/* SurveyJS 내부 여백 줄이기 - 카드 중첩 제거 */
+.sv-root-modern .sv-question,
+.sd-root-modern .sd-question,
+.sd-element,
+.sd-question {
+  padding: 4px 0 !important;
+  margin-bottom: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.sv-root-modern .sv-page,
+.sd-root-modern .sd-page,
+.sd-page {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.sv-root-modern .sv-body,
+.sd-root-modern .sd-body,
+.sd-body {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.sv-root-modern .sv-container-modern,
+.sd-root-modern .sd-container-modern,
+.sd-container-modern {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* SurveyJS 패널/카드 중첩 제거 */
+.sd-element--with-frame,
+.sd-question--with-frame,
+.sv-root-modern .sv-question--with-frame,
+.sd-root-modern .sd-question--with-frame {
+  padding: 4px 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.sd-element__content,
+.sd-question__content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 질문 헤더 영역 여백 최소화 */
+.sd-element__header,
+.sd-question__header,
+.sv-root-modern .sv-question__header {
+  padding: 0 0 4px 0 !important;
+  margin: 0 !important;
+}
+
+/* 질문 타이틀에서 "science_attitude *" 같은 이름 숨기기 */
+.sd-element__num,
+.sd-question__num {
+  display: none !important;
+}
+
+/* 전체 래퍼 패딩 제거 */
+.sd-body__page,
+.sd-page__row,
+.sv-root-modern .sv-row {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* SurveyJS 테마 색상 커스터마이징 */
+.sv-root-modern .sv-page__title {
+  color: var(--primary);
+}
+
+.sv-root-modern .sv-question__title {
+  color: var(--primary);
+}
+
+/* SurveyJS 버튼 - 루트 무관으로 모든 버튼 잡기 */
+.sv-button,
+.sd-btn,
+.sv-root-modern .sv-button,
+.sd-root-modern .sd-btn,
+.sd-navigation__next-btn,
+.sd-navigation__complete-btn,
+button[type="button"].sv-btn,
+button[type="button"].sd-btn {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 4px rgba(30, 58, 99, 0.3) !important;
+}
+
+.sv-button:hover,
+.sd-btn:hover,
+.sv-root-modern .sv-button:hover,
+.sd-root-modern .sd-btn:hover,
+.sd-navigation__next-btn:hover,
+.sd-navigation__complete-btn:hover,
+button[type="button"].sv-btn:hover,
+button[type="button"].sd-btn:hover {
+  background-color: #152a4a !important;
+  border-color: #152a4a !important;
+  box-shadow: 0 4px 8px rgba(30, 58, 99, 0.4) !important;
+}
+
+.sv-root-modern .sv-progress__bar {
+  background-color: var(--secondary);
+}
+
+/* 체크박스 색상 - 기본 회색 */
+.sv-checkbox__decorator,
+.sd-checkbox__decorator,
+.sv-radio__decorator,
+.sd-radio__decorator,
+.sv-root-modern .sv-checkbox__decorator,
+.sd-root-modern .sd-checkbox__decorator,
+.sv-root-modern .sv-radio__decorator,
+.sd-root-modern .sd-radio__decorator {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  border-width: 2px !important;
+}
+
+/* 체크박스 체크된 상태 - 짙은 색 (네이비) */
+input[type="checkbox"]:checked + .sv-checkbox__decorator,
+input[type="checkbox"]:checked + .sd-checkbox__decorator,
+input[type="radio"]:checked + .sv-radio__decorator,
+input[type="radio"]:checked + .sd-radio__decorator,
+.sv-checkbox--checked .sv-checkbox__decorator,
+.sd-checkbox--checked .sd-checkbox__decorator,
+.sv-radio--checked .sv-radio__decorator,
+.sd-radio--checked .sd-radio__decorator,
+.sv-root-modern .sv-checkbox--checked .sv-checkbox__decorator,
+.sd-root-modern .sd-checkbox--checked .sd-checkbox__decorator,
+.sv-root-modern .sv-radio--checked .sv-radio__decorator,
+.sd-root-modern .sd-radio--checked .sd-radio__decorator,
+.sv-item--checked .sv-checkbox__decorator,
+.sd-item--checked .sd-checkbox__decorator,
+.sv-item--checked .sv-radio__decorator,
+.sd-item--checked .sd-radio__decorator {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* 체크된 상태에서 hover/focus/active 시에도 동일 색상 유지 */
+.sv-checkbox--checked:hover .sv-checkbox__decorator,
+.sv-checkbox--checked:focus-within .sv-checkbox__decorator,
+.sd-checkbox--checked:hover .sd-checkbox__decorator,
+.sd-checkbox--checked:focus-within .sd-checkbox__decorator,
+.sv-item--checked:hover .sv-checkbox__decorator,
+.sv-item--checked:focus-within .sv-checkbox__decorator,
+.sd-item--checked:hover .sd-checkbox__decorator,
+.sd-item--checked:focus-within .sd-checkbox__decorator,
+.sv-radio--checked:hover .sv-radio__decorator,
+.sv-radio--checked:focus-within .sv-radio__decorator,
+.sd-radio--checked:hover .sd-radio__decorator,
+.sd-radio--checked:focus-within .sd-radio__decorator,
+.sv-item--checked:hover .sv-radio__decorator,
+.sv-item--checked:focus-within .sv-radio__decorator,
+.sd-item--checked:hover .sd-radio__decorator,
+.sd-item--checked:focus-within .sd-radio__decorator {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* 체크 마크 색상 - fill + stroke 둘 다 강제 */
+.sv-checkbox__svg,
+.sd-checkbox__svg,
+.sv-radio__svg,
+.sd-radio__svg,
+.sv-root-modern .sv-checkbox__svg,
+.sd-root-modern .sd-checkbox__svg,
+.sv-root-modern .sv-radio__svg,
+.sd-root-modern .sd-radio__svg {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+
+/* 체크된 항목 레이블 볼드 - 루트 무관 */
+.sv-selectbase__item--checked .sv-selectbase__label,
+.sd-selectbase__item--checked .sd-selectbase__label,
+.sv-root-modern .sv-selectbase__item--checked .sv-selectbase__label,
+.sd-root-modern .sd-selectbase__item--checked .sd-selectbase__label {
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+}
+
+/* 호버 및 포커스 효과 제거 - 루트 무관 */
+.sv-checkbox,
+.sd-checkbox,
+.sv-item,
+.sd-item,
+.sv-selectbase__item,
+.sd-selectbase__item,
+.sv-root-modern .sv-checkbox,
+.sd-root-modern .sd-checkbox,
+.sv-root-modern .sv-item,
+.sd-root-modern .sd-item,
+.sv-root-modern .sv-selectbase__item,
+.sd-root-modern .sd-selectbase__item {
+  outline: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.sv-checkbox:focus,
+.sd-checkbox:focus,
+.sv-item:focus,
+.sd-item:focus,
+.sv-selectbase__item:focus,
+.sd-selectbase__item:focus,
+.sv-root-modern .sv-checkbox:focus,
+.sd-root-modern .sd-checkbox:focus,
+.sv-root-modern .sv-item:focus,
+.sd-root-modern .sd-item:focus,
+.sv-root-modern .sv-selectbase__item:focus,
+.sd-root-modern .sd-selectbase__item:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.sv-root-modern .sv-question__title {
+  font-size: 12px;
+  line-height: 1.4;
+  font-family: var(--font-noto-sans), sans-serif;
+  font-weight: 500;
+}
+
+.sv-root-modern .sv-page__title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-family: var(--font-noto-sans), sans-serif;
+}
+
+.sv-root-modern .sv-selectbase__item {
+  padding: 6px 10px;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.sv-root-modern .sv-button {
+  padding: 12px 24px;
+  font-size: 15px;
+}
+
+.sv-root-modern .sv-comment {
+  font-size: 13px;
+  padding: 8px;
+}
+
+.sv-root-modern .sv-question__description {
+  font-size: 12px;
+}
+
+/* Matrix 테이블 스타일링 */
+.sv-root-modern .sv-matrix,
+.sd-root-modern .sd-matrix,
+.sv-root-modern table.sv-table,
+.sd-root-modern table.sd-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+/* Matrix 라디오 셀 내부 텍스트 숨기기 - 라디오버튼만 표시 */
+.sd-matrix .sd-radio__label .sd-item__control-label,
+.sv-matrix .sv-radio__label .sv-item__control-label,
+.sd-matrix .sd-selectbase__label span.sd-item__control-label,
+.sv-matrix .sv-selectbase__label span.sv-item__control-label,
+.sd-matrix td:not(:first-child) .sd-item__control-label,
+.sv-matrix td:not(:first-child) .sv-item__control-label,
+.sd-matrix .sd-matrix__cell:not(.sd-matrix__cell--row-text) .sd-item__control-label,
+.sv-matrix .sv-matrix__cell:not(.sv-matrix__cell--row-text) .sv-item__control-label {
+  display: none !important;
+  font-size: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Matrix 헤더 행 고정 (sticky) */
+.sd-matrix thead,
+.sv-matrix thead,
+.sd-matrix .sd-table thead,
+.sv-matrix .sv-table thead {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+.sd-matrix thead th,
+.sv-matrix thead th,
+.sd-matrix .sd-table thead th,
+.sv-matrix .sv-table thead th,
+.sd-matrix__cell--header,
+.sv-matrix__cell--header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background-color: #f3f4f6 !important;
+}
+
+.sv-root-modern .sv-matrix__cell,
+.sd-root-modern .sd-matrix__cell,
+.sv-root-modern .sv-table__cell,
+.sd-root-modern .sd-table__cell,
+.sv-root-modern table.sv-table td,
+.sv-root-modern table.sv-table th {
+  padding: 8px 6px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Matrix 헤더 스타일 */
+.sv-root-modern .sv-matrix__cell--header,
+.sd-root-modern .sd-matrix__cell--header,
+.sv-root-modern table.sv-table thead th,
+.sv-root-modern table.sv-table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: var(--primary);
+  white-space: pre-line;
+  font-size: 10px;
+  line-height: 1.3;
+  padding: 6px 3px;
+  border-bottom: 2px solid #d1d5db;
+}
+
+/* Matrix 행 레이블 (첫 번째 열) */
+.sv-root-modern .sv-matrix__cell--row-text,
+.sd-root-modern .sd-matrix__cell--row-text,
+.sv-root-modern table.sv-table tbody th {
+  text-align: left;
+  padding: 6px 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 400;
+  background-color: #fafafa;
+  border-right: 2px solid #d1d5db;
+}
+
+/* Matrix 라디오 버튼 셀 */
+.sv-root-modern .sv-matrix__cell:not(.sv-matrix__cell--header):not(.sv-matrix__cell--row-text),
+.sd-root-modern .sd-matrix__cell:not(.sd-matrix__cell--header):not(.sd-matrix__cell--row-text),
+.sv-root-modern table.sv-table tbody td {
+  background-color: #ffffff;
+  min-width: 32px;
+  width: auto;
+  padding: 4px 2px;
+}
+
+/* Matrix 라디오 버튼 크기 및 가시성 개선 */
+.sv-root-modern .sv-matrix input[type="radio"],
+.sd-root-modern .sd-matrix input[type="radio"],
+.sv-root-modern table.sv-table input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Matrix 라디오 버튼 스타일 */
+.sv-root-modern .sv-matrix .sv-radio,
+.sd-root-modern .sd-matrix .sd-radio,
+.sv-root-modern table.sv-table .sv-radio,
+.sd-matrix .sd-radio,
+.sd-matrix .sd-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+}
+
+.sv-root-modern .sv-matrix .sv-radio__decorator,
+.sd-root-modern .sd-matrix .sd-radio__decorator,
+.sv-root-modern table.sv-table .sv-radio__decorator,
+.sd-matrix .sd-radio__decorator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db !important;
+  background-color: #ffffff !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Matrix 라디오 버튼 체크된 상태 */
+.sv-root-modern .sv-matrix .sv-radio--checked .sv-radio__decorator,
+.sd-root-modern .sd-matrix .sd-radio--checked .sd-radio__decorator,
+.sv-root-modern table.sv-table .sv-radio--checked .sv-radio__decorator,
+.sv-root-modern .sv-matrix input[type="radio"]:checked + .sv-radio__decorator,
+.sd-root-modern .sd-matrix input[type="radio"]:checked + .sd-radio__decorator,
+.sv-root-modern table.sv-table input[type="radio"]:checked + .sv-radio__decorator {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(30, 58, 99, 0.1);
+}
+
+/* Matrix 라디오 버튼 체크 마크 */
+.sv-root-modern .sv-matrix .sv-radio__svg,
+.sd-root-modern .sd-matrix .sd-radio__svg,
+.sv-root-modern table.sv-table .sv-radio__svg {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  width: 10px;
+  height: 10px;
+}
+
+/* Matrix 행 호버 효과 */
+.sv-root-modern .sv-matrix tr:hover td:not(.sv-matrix__cell--header),
+.sd-root-modern .sd-matrix tr:hover td:not(.sd-matrix__cell--header),
+.sv-root-modern table.sv-table tbody tr:hover td {
+  background-color: #f9fafb;
+}
+
+/* Matrix 모바일 분리 방지 - 항상 테이블 유지 */
+.sd-matrix .sd-table,
+.sv-matrix .sv-table,
+.sd-matrix table,
+.sv-matrix table,
+.sd-root-modern .sd-matrix .sd-table,
+.sv-root-modern .sv-matrix .sv-table {
+  display: table !important;
+}
+
+.sd-matrix .sd-table thead,
+.sv-matrix .sv-table thead,
+.sd-matrix table thead,
+.sv-matrix table thead {
+  display: table-header-group !important;
+}
+
+.sd-matrix .sd-table tbody,
+.sv-matrix .sv-table tbody,
+.sd-matrix table tbody,
+.sv-matrix table tbody {
+  display: table-row-group !important;
+}
+
+.sd-matrix .sd-table tr,
+.sv-matrix .sv-table tr,
+.sd-matrix table tr,
+.sv-matrix table tr,
+.sd-matrix .sd-table__row,
+.sv-matrix .sv-table__row {
+  display: table-row !important;
+}
+
+.sd-matrix .sd-table td,
+.sd-matrix .sd-table th,
+.sv-matrix .sv-table td,
+.sv-matrix .sv-table th,
+.sd-matrix table td,
+.sd-matrix table th,
+.sv-matrix table td,
+.sv-matrix table th,
+.sd-matrix .sd-matrix__cell,
+.sv-matrix .sv-matrix__cell {
+  display: table-cell !important;
+}
+
+/* 모바일 리스트 모드 비활성화 */
+.sd-matrix .sd-matrix__cell--detail-panel,
+.sd-matrix--mobile,
+.sv-matrix--mobile {
+  display: none !important;
+}
+
+.sd-matrix .sd-list,
+.sd-matrix .sd-dropdown {
+  display: none !important;
+}
+
+/* 모바일에서 터치 영역 확보 */
+@media (max-width: 768px) {
+  .sv-root-modern .sv-selectbase__item {
+    padding: 10px 14px;
+    min-height: 40px;
+  }
+
+  .sv-root-modern .sv-button {
+    min-height: 44px;
+  }
+
+  /* 모바일에서 Matrix 테이블 - 테이블 형식 유지 */
+  .sv-root-modern .sv-matrix__cell--header,
+  .sd-root-modern .sd-matrix__cell--header,
+  .sv-root-modern table.sv-table thead th {
+    font-size: 8px !important;
+    padding: 4px 2px !important;
+    line-height: 1.2 !important;
+    word-break: keep-all;
+  }
+
+  .sv-root-modern .sv-matrix__cell--row-text,
+  .sd-root-modern .sd-matrix__cell--row-text,
+  .sv-root-modern table.sv-table tbody th {
+    font-size: 9px !important;
+    padding: 4px 3px !important;
+    line-height: 1.3 !important;
+  }
+
+  .sv-root-modern .sv-matrix__cell,
+  .sd-root-modern .sd-matrix__cell,
+  .sv-root-modern table.sv-table td {
+    padding: 3px 1px !important;
+  }
+
+  /* 모바일에서 라디오 버튼 크기 축소 */
+  .sv-root-modern .sv-matrix .sv-radio__decorator,
+  .sd-root-modern .sd-matrix .sd-radio__decorator,
+  .sv-root-modern table.sv-table .sv-radio__decorator,
+  .sd-matrix .sd-radio__decorator {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .sv-root-modern .sv-matrix input[type="radio"],
+  .sd-root-modern .sd-matrix input[type="radio"],
+  .sv-root-modern table.sv-table input[type="radio"] {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* 모바일에서 라디오 버튼 셀 최소 너비 축소 */
+  .sv-root-modern .sv-matrix__cell:not(.sv-matrix__cell--header):not(.sv-matrix__cell--row-text),
+  .sd-root-modern .sd-matrix__cell:not(.sd-matrix__cell--header):not(.sd-matrix__cell--row-text),
+  .sv-root-modern table.sv-table tbody td {
+    min-width: 28px !important;
+    padding: 2px 1px !important;
+  }
+
+  /* 모바일에서 페이지 타이틀 폰트 축소 */
+  .sv-root-modern .sv-page__title {
+    font-size: 11px !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  /* 모바일에서 질문 타이틀 폰트 축소 */
+  .sv-root-modern .sv-question__title {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* 모바일에서도 매트릭스 테이블 강제 유지 */
+  .sd-matrix .sd-table,
+  .sv-matrix .sv-table,
+  .sd-matrix table,
+  .sv-matrix table {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  .sd-matrix .sd-table thead,
+  .sv-matrix .sv-table thead,
+  .sd-matrix table thead,
+  .sv-matrix table thead {
+    display: table-header-group !important;
+  }
+
+  .sd-matrix .sd-table tbody,
+  .sv-matrix .sv-table tbody,
+  .sd-matrix table tbody,
+  .sv-matrix table tbody {
+    display: table-row-group !important;
+  }
+
+  .sd-matrix .sd-table tr,
+  .sv-matrix .sv-table tr,
+  .sd-matrix table tr,
+  .sv-matrix table tr {
+    display: table-row !important;
+  }
+
+  .sd-matrix .sd-table td,
+  .sd-matrix .sd-table th,
+  .sv-matrix .sv-table td,
+  .sv-matrix .sv-table th,
+  .sd-matrix table td,
+  .sd-matrix table th,
+  .sv-matrix table td,
+  .sv-matrix table th {
+    display: table-cell !important;
+  }
+
+  /* 모바일 리스트 모드 강제 숨김 */
+  .sd-matrix--mobile,
+  .sv-matrix--mobile,
+  .sd-matrix .sd-matrix__cell--detail-panel {
+    display: none !important;
+  }
+
+  /* 라디오 버튼 셀 최소 너비 더 축소 */
+  .sv-root-modern .sv-matrix__cell:not(.sv-matrix__cell--header):not(.sv-matrix__cell--row-text),
+  .sd-root-modern .sd-matrix__cell:not(.sd-matrix__cell--header):not(.sd-matrix__cell--row-text),
+  .sv-root-modern table.sv-table tbody td,
+  .sd-matrix .sd-table td:not(:first-child) {
+    min-width: 30px !important;
+    padding: 2px 1px !important;
+  }
 }
