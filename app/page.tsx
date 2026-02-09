@@ -170,6 +170,20 @@ export default function Home() {
       "colorPalette": "light"
     });
 
+    // 모바일에서도 매트릭스 테이블 유지 - isMobile을 인스턴스에서 false로 고정
+    if (typeof window !== 'undefined') {
+      Object.defineProperty(surveyModel, 'isMobile', {
+        get: () => false,
+        configurable: true
+      });
+      surveyModel.getAllQuestions().forEach((q: any) => {
+        Object.defineProperty(q, 'isMobile', {
+          get: () => false,
+          configurable: true
+        });
+      });
+    }
+
     surveyModel.onComplete.add(async (sender) => {
       console.log("Survey results:", sender.data);
 
