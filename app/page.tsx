@@ -170,18 +170,6 @@ export default function Home() {
       "colorPalette": "light"
     });
 
-    // 모바일에서도 매트릭스 테이블 유지 (개별 문항 분리 방지)
-    surveyModel.widthMode = "static";
-    surveyModel.width = "100%";
-
-    // 매트릭스 질문의 모바일 모드 비활성화
-    surveyModel.getAllQuestions().forEach((q: any) => {
-      if (q.getType() === "matrix") {
-        q.renderAs = "default";
-        q.columnLayout = "horizontal";
-      }
-    });
-
     surveyModel.onComplete.add(async (sender) => {
       console.log("Survey results:", sender.data);
 
