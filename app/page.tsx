@@ -18,33 +18,55 @@ export default function Home() {
   const [surveyCompleted, setSurveyCompleted] = useState(false);
   const [initialSurveyData, setInitialSurveyData] = useState<SurveyData | null>(null);
 
-  // 구글 리다이렉트 복귀 시 반드시 페이지 로드 시점에 처리해야 함 (LoginPage는 로딩 중엔 마운트되지 않음)
+  // Auth Guard 타이밍 해결: getRedirectResult 완료 후에만 onAuthStateChanged 구독.
+  // (리다이렉트 복귀 시 Firebase 세션 복원 전에 "user 없음"으로 판단해 로그인 화면으로 가는 것 방지)
   useEffect(() => {
     if (typeof window === "undefined" || !auth) return;
     setRedirectError(null);
+
+    let unsub: (() => void) | null = null;
+    let done = false;
+
+    const subscribeAuth = () => {
+      if (unsub) return;
+      unsub = onAuthStateChanged(auth, (u) => {
+        console.log("[구글 로그인] USER:", u ? `${u.uid}` : "null");
+        setUser(u);
+        setLoading(false);
+      });
+    };
+
+    const timeout = setTimeout(() => {
+      if (!done) {
+        done = true;
+        subscribeAuth();
+      }
+    }, 3000);
+
     getRedirectResult(auth)
       .then(async (result) => {
+        done = true;
         if (!result?.user) {
           if (result === null) {
             console.log("[구글 로그인] 리다이렉트 복귀 아님 또는 이미 처리됨");
           } else {
             console.log("[구글 로그인] getRedirectResult 결과 없음:", result);
           }
-          return;
-        }
-        console.log("[구글 로그인] 리다이렉트 성공, user:", result.user.uid);
-        try {
-          await setDoc(doc(db, "users", result.user.uid), {
-            email: result.user.email,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
-            loginMethod: "google",
-            createdAt: new Date(),
-          });
-        } catch (e) {
-          console.error("[구글 로그인] Firestore 저장 실패:", e);
-          const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
-          setRedirectError(`로그인 후 저장 실패: ${msg}`);
+        } else {
+          console.log("[구글 로그인] 리다이렉트 성공, user:", result.user.uid);
+          try {
+            await setDoc(doc(db, "users", result.user.uid), {
+              email: result.user.email,
+              displayName: result.user.displayName,
+              photoURL: result.user.photoURL,
+              loginMethod: "google",
+              createdAt: new Date(),
+            });
+          } catch (e) {
+            console.error("[구글 로그인] Firestore 저장 실패:", e);
+            const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+            setRedirectError(`로그인 후 저장 실패: ${msg}`);
+          }
         }
       })
       .catch((err: unknown) => {
@@ -53,16 +75,17 @@ export default function Home() {
         console.error("[구글 로그인] 리다이렉트 결과 처리 실패:", { err, code, message });
         const detail = code ? `[${code}] ${message}` : message;
         setRedirectError(`구글 로그인 실패. ${detail}`);
+      })
+      .finally(() => {
+        done = true;
+        // 리다이렉트 처리 끝난 뒤에만 auth 상태 구독 → 로딩 해제. (무한 첫 화면 복귀 방지)
+        subscribeAuth();
       });
-  }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined" || !auth) return;
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsub();
+    return () => {
+      clearTimeout(timeout);
+      unsub?.();
+    };
   }, []);
 
   useEffect(() => {
