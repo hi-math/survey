@@ -1,14 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signInWithRedirect, signInWithPopup, signInAnonymously, setPersistence, browserSessionPersistence } from 'firebase/auth';
+import { signInWithPopup, signInAnonymously, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { auth, googleProvider, db } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-
-const isMobile = () => {
-  if (typeof navigator === 'undefined') return false;
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (typeof window !== 'undefined' && window.innerWidth < 768);
-};
 
 const isInAppBrowser = () => {
   if (typeof navigator === 'undefined') return false;
@@ -76,11 +71,7 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       onClearError?.();
       await setPersistence(auth, browserSessionPersistence);
 
-      if (isMobile()) {
-        await signInWithRedirect(auth, googleProvider);
-        return;
-      }
-
+      // 모든 환경에서 signInWithPopup 사용 (signInWithRedirect는 최신 브라우저에서 third-party cookie 차단으로 실패함)
       const result = await signInWithPopup(auth, googleProvider);
       if (result?.user) {
         await setDoc(doc(db, 'users', result.user.uid), {
