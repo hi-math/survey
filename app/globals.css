@@ -1,33 +1,51 @@
-@import "survey-core/survey-core.min.css";
 @import "tailwindcss";
 
+/* 첨부 이미지 스타일: 배경 흰색, 헤더 연한 앰버 #FFF0D7, 플랫 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #1E3A63;
-  --secondary: #6B8EA6;
-  --accent: #F5B963;
-  --neutral: #E0DDD8;
+  --bg-main: #ffffff;
+  --card-bg: #FFFBF7;
+  --shade-bg: #FFF0D7;
+  --header-title: #8B7BA8;
+  --table-header-bg: #5D4171;
+  --primary: #E8A84A;
+  --primary-hover: #d99738;
+  --secondary: #8C55E8;
+  --secondary-hover: #7a3ed6;
+  --text: #404040;
+  --text-muted: #737373;
+  --border: #e8e2d8;
+  --checkbox-checked: #B8A9D4;
+  --question-bar: #F78C3D;
+  --radius: 1rem;
+  --radius-lg: 1.25rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-main);
+  --color-foreground: var(--text);
   --font-noto-sans: var(--font-noto-sans);
   --font-nanum-gothic: var(--font-nanum-gothic);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-main: #2a1f3d;
+    --card-bg: #3d3252;
+    --shade-bg: #352a48;
+    --header-title: #b8a9d4;
+    --table-header-bg: #3d3252;
+    --checkbox-checked: #a89cc4;
+    --question-bar: #d97a35;
+    --text: #e5e0eb;
+    --text-muted: #a89cc4;
+    --border: #4a3d5c;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-nanum-gothic), sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  font-family: var(--font-noto-sans), system-ui, sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -37,537 +55,102 @@ main {
   padding: 0;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
-/* 헤더 폰트 */
-header {
-  font-family: var(--font-noto-sans), sans-serif;
+/* 헤더: 연한 앰버 전폭, 아래만 라운드 */
+.header-bar {
+  box-shadow: none;
+  border-radius: 0 0 1.5rem 1.5rem;
+  background: var(--shade-bg);
+}
+.header-title {
+  text-shadow: none;
+  color: var(--header-title);
 }
 
-/* SurveyJS 폰트 사이즈 및 폰트 조정 */
-.sv-root-modern,
-.sd-root-modern {
-  --sjs-font-size: 12px !important;
-  --sjs-font-questiontitle-size: 12px !important;
-  --sjs-font-questiondescription-size: 10px !important;
-  --sjs-font-editorfont-size: 11px !important;
-  --sjs-font-pagetitle-size: 14px !important;
-  --sjs-font-pagedescription-size: 11px !important;
-  font-size: 11px !important;
-  font-family: var(--font-nanum-gothic), sans-serif;
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-  box-sizing: border-box !important;
+/* 문항: 카드 없이 배경(흰색)과 통일 */
+.survey-question {
+  background: transparent;
+  padding: 0 0 1.25rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
+}
+.survey-question:last-child {
+  border-bottom: none;
 }
 
-/* SurveyJS 모든 내부 요소 폰트 강제 축소 */
-.sd-root-modern *,
-.sv-root-modern * {
-  font-size: inherit;
-}
-
-.sd-root-modern .sd-body,
-.sd-root-modern .sd-page,
-.sd-root-modern .sd-panel,
-.sd-root-modern .sd-row,
-.sd-root-modern .sd-element,
-.sd-root-modern .sd-question,
-.sd-root-modern .sd-question__content,
-.sd-root-modern .sd-selectbase,
-.sd-root-modern .sd-item__control-label,
-.sd-root-modern .sd-checkbox__label,
-.sd-root-modern .sd-radio__label,
-.sd-root-modern span,
-.sd-root-modern label,
-.sd-root-modern p,
-.sd-root-modern div {
-  font-size: 12px !important;
-}
-
-.sd-root-modern .sd-page__title,
-.sd-root-modern .sd-title {
-  font-size: 14px !important;
-}
-
-.sd-root-modern .sd-page__description,
-.sd-root-modern .sd-question__description,
-.sd-root-modern .sd-description {
-  font-size: 10px !important;
-}
-
-.sd-root-modern .sd-question__title,
-.sd-root-modern .sd-element__title,
-.sd-root-modern h5 {
-  font-size: 12px !important;
-}
-
-/* SurveyJS 내부 여백 줄이기 - 카드 중첩 제거 */
-.sv-root-modern .sv-question,
-.sd-root-modern .sd-question,
-.sd-element,
-.sd-question {
-  padding: 4px 8px !important;
-  margin-bottom: 4px !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-}
-
-.sv-root-modern .sv-page,
-.sd-root-modern .sd-page,
-.sd-page {
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-.sv-root-modern .sv-body,
-.sd-root-modern .sd-body,
-.sd-body {
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-.sv-root-modern .sv-container-modern,
-.sd-root-modern .sd-container-modern,
-.sd-container-modern {
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-/* SurveyJS 패널/카드 중첩 제거 */
-.sd-element--with-frame,
-.sd-question--with-frame,
-.sv-root-modern .sv-question--with-frame,
-.sd-root-modern .sd-question--with-frame {
-  padding: 4px 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-}
-
-.sd-element__content,
-.sd-question__content {
-  padding: 0 8px !important;
-  margin: 0 !important;
-}
-
-/* 질문 헤더 영역 여백 */
-.sd-element__header,
-.sd-question__header,
-.sv-root-modern .sv-question__header {
-  padding: 0 8px 4px 8px !important;
-  margin: 0 !important;
-}
-
-/* 질문 타이틀에서 "science_attitude *" 같은 이름 숨기기 */
-.sd-element__num,
-.sd-question__num {
-  display: none !important;
-}
-
-/* 전체 래퍼 패딩 */
-.sd-body__page,
-.sd-page__row,
-.sv-root-modern .sv-row {
-  padding: 0 4px !important;
-  margin: 0 !important;
-}
-
-/* SurveyJS 테마 색상 커스터마이징 */
-.sv-root-modern .sv-page__title {
-  color: var(--primary);
-}
-
-.sv-root-modern .sv-question__title {
-  color: var(--primary);
-}
-
-/* SurveyJS 버튼 - 루트 무관으로 모든 버튼 잡기 */
-.sv-button,
-.sd-btn,
-.sv-root-modern .sv-button,
-.sd-root-modern .sd-btn,
-.sd-navigation__next-btn,
-.sd-navigation__complete-btn,
-button[type="button"].sv-btn,
-button[type="button"].sd-btn {
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
-  color: #ffffff !important;
-  font-weight: 600 !important;
-  box-shadow: 0 2px 4px rgba(30, 58, 99, 0.3) !important;
-}
-
-.sv-button:hover,
-.sd-btn:hover,
-.sv-root-modern .sv-button:hover,
-.sd-root-modern .sd-btn:hover,
-.sd-navigation__next-btn:hover,
-.sd-navigation__complete-btn:hover,
-button[type="button"].sv-btn:hover,
-button[type="button"].sd-btn:hover {
-  background-color: #152a4a !important;
-  border-color: #152a4a !important;
-  box-shadow: 0 4px 8px rgba(30, 58, 99, 0.4) !important;
-}
-
-/* 네비게이션 버튼 가운데 정렬 */
-.sd-action-bar,
-.sv-footer,
-.sd-footer,
-.sv-root-modern .sv-footer,
-.sd-root-modern .sd-footer,
-.sd-body__navigation {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 12px !important;
-  width: 100% !important;
-  flex-wrap: wrap !important;
-}
-
-/* 네비게이션 버튼 통일 크기 - 뷰포트 25% */
-.sd-body__navigation .sd-btn,
-.sd-navigation__prev-btn,
-.sd-navigation__next-btn,
-.sd-navigation__complete-btn {
-  width: 25vw !important;
-  min-width: 25vw !important;
-  max-width: 25vw !important;
-  padding: 10px 0 !important;
-  font-size: 11px !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
-  flex: none !important;
-}
-
-/* 이전 섹션으로 버튼 - 연한 스타일 (높은 우선순위) */
-.sd-navigation__prev-btn,
-.sd-navigation__prev-btn.sd-btn,
-button.sd-navigation__prev-btn {
-  background-color: #e8edf3 !important;
-  color: var(--primary) !important;
-  border: 1px solid #c5cdd8 !important;
-  box-shadow: none !important;
-}
-
-.sd-navigation__prev-btn:hover,
-.sd-navigation__prev-btn.sd-btn:hover,
-button.sd-navigation__prev-btn:hover {
-  background-color: #d8dfe8 !important;
-  color: var(--primary) !important;
-  border-color: #b0bac8 !important;
-  box-shadow: none !important;
-}
-
-.sv-root-modern .sv-progress__bar {
-  background-color: var(--secondary);
-}
-
-/* 체크박스 색상 - 기본 회색 */
-.sv-checkbox__decorator,
-.sd-checkbox__decorator,
-.sv-radio__decorator,
-.sd-radio__decorator,
-.sv-root-modern .sv-checkbox__decorator,
-.sd-root-modern .sd-checkbox__decorator,
-.sv-root-modern .sv-radio__decorator,
-.sd-root-modern .sd-radio__decorator {
-  background-color: #ffffff !important;
-  border-color: #d1d5db !important;
-  border-width: 2px !important;
-}
-
-/* 체크박스 체크된 상태 - 짙은 색 (네이비) */
-input[type="checkbox"]:checked + .sv-checkbox__decorator,
-input[type="checkbox"]:checked + .sd-checkbox__decorator,
-input[type="radio"]:checked + .sv-radio__decorator,
-input[type="radio"]:checked + .sd-radio__decorator,
-.sv-checkbox--checked .sv-checkbox__decorator,
-.sd-checkbox--checked .sd-checkbox__decorator,
-.sv-radio--checked .sv-radio__decorator,
-.sd-radio--checked .sd-radio__decorator,
-.sv-root-modern .sv-checkbox--checked .sv-checkbox__decorator,
-.sd-root-modern .sd-checkbox--checked .sd-checkbox__decorator,
-.sv-root-modern .sv-radio--checked .sv-radio__decorator,
-.sd-root-modern .sd-radio--checked .sd-radio__decorator,
-.sv-item--checked .sv-checkbox__decorator,
-.sd-item--checked .sd-checkbox__decorator,
-.sv-item--checked .sv-radio__decorator,
-.sd-item--checked .sd-radio__decorator {
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
-}
-
-/* 체크된 상태에서 hover/focus/active 시에도 동일 색상 유지 */
-.sv-checkbox--checked:hover .sv-checkbox__decorator,
-.sv-checkbox--checked:focus-within .sv-checkbox__decorator,
-.sd-checkbox--checked:hover .sd-checkbox__decorator,
-.sd-checkbox--checked:focus-within .sd-checkbox__decorator,
-.sv-item--checked:hover .sv-checkbox__decorator,
-.sv-item--checked:focus-within .sv-checkbox__decorator,
-.sd-item--checked:hover .sd-checkbox__decorator,
-.sd-item--checked:focus-within .sd-checkbox__decorator,
-.sv-radio--checked:hover .sv-radio__decorator,
-.sv-radio--checked:focus-within .sv-radio__decorator,
-.sd-radio--checked:hover .sd-radio__decorator,
-.sd-radio--checked:focus-within .sd-radio__decorator,
-.sv-item--checked:hover .sv-radio__decorator,
-.sv-item--checked:focus-within .sv-radio__decorator,
-.sd-item--checked:hover .sd-radio__decorator,
-.sd-item--checked:focus-within .sd-radio__decorator {
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
-}
-
-/* 체크 마크 색상 - fill + stroke 둘 다 강제 */
-.sv-checkbox__svg,
-.sd-checkbox__svg,
-.sv-radio__svg,
-.sd-radio__svg,
-.sv-root-modern .sv-checkbox__svg,
-.sd-root-modern .sd-checkbox__svg,
-.sv-root-modern .sv-radio__svg,
-.sd-root-modern .sd-radio__svg {
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-  color: #ffffff !important;
-}
-
-/* 체크된 항목 레이블 볼드 - 루트 무관 */
-.sv-selectbase__item--checked .sv-selectbase__label,
-.sd-selectbase__item--checked .sd-selectbase__label,
-.sv-root-modern .sv-selectbase__item--checked .sv-selectbase__label,
-.sd-root-modern .sd-selectbase__item--checked .sd-selectbase__label {
-  font-weight: 700 !important;
-  color: var(--primary) !important;
-}
-
-/* 호버 및 포커스 효과 제거 - 루트 무관 */
-.sv-checkbox,
-.sd-checkbox,
-.sv-item,
-.sd-item,
-.sv-selectbase__item,
-.sd-selectbase__item,
-.sv-root-modern .sv-checkbox,
-.sd-root-modern .sd-checkbox,
-.sv-root-modern .sv-item,
-.sd-root-modern .sd-item,
-.sv-root-modern .sv-selectbase__item,
-.sd-root-modern .sd-selectbase__item {
-  outline: none !important;
-  transition: background-color 0.2s ease !important;
-}
-
-.sv-checkbox:focus,
-.sd-checkbox:focus,
-.sv-item:focus,
-.sd-item:focus,
-.sv-selectbase__item:focus,
-.sd-selectbase__item:focus,
-.sv-root-modern .sv-checkbox:focus,
-.sd-root-modern .sd-checkbox:focus,
-.sv-root-modern .sv-item:focus,
-.sd-root-modern .sd-item:focus,
-.sv-root-modern .sv-selectbase__item:focus,
-.sd-root-modern .sd-selectbase__item:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.sv-root-modern .sv-question__title,
-.sd-question__title,
-.sd-element__title {
-  font-size: 12px !important;
-  line-height: 1.4;
-  font-family: var(--font-noto-sans), sans-serif;
-  font-weight: 500;
-}
-
-.sv-root-modern .sv-page__title,
-.sd-page__title {
-  font-size: 12px !important;
+/* 문항 영역 타이틀: 오렌지 배경 + 흰색 텍스트 (첨부 이미지 스타일) */
+.survey-question-bar {
+  background: var(--question-bar);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 1rem;
 }
 
-.sv-root-modern .sv-selectbase__item,
-.sd-selectbase__item,
-.sd-item {
-  padding: 5px 8px;
-  font-size: 12px !important;
-  margin-bottom: 3px;
+/* 체크박스 체크 시 연보라색 */
+.survey-question input[type="checkbox"] {
+  accent-color: var(--checkbox-checked);
 }
 
-.sv-root-modern .sv-button {
-  padding: 10px 20px;
-  font-size: 11px;
+/* 스크린샷 틀: 페이지 공통 */
+.page-frame {
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem 1rem 2rem;
 }
 
-.sv-root-modern .sv-comment,
-.sd-comment {
-  font-size: 12px !important;
-  padding: 6px;
+/* 상단 헤더 바 (You Have New Task 스타일) */
+.screen-header {
+  background: var(--card-bg);
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
 }
 
-.sv-root-modern .sv-question__description,
-.sd-question__description,
-.sd-description {
-  font-size: 10px !important;
+/* 카드: 둥근 오프화이트 블록 */
+.card {
+  background: var(--card-bg);
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* Matrix 테이블 스타일링 */
-.sv-root-modern .sv-matrix,
-.sd-root-modern .sd-matrix,
-.sv-root-modern table.sv-table,
-.sd-root-modern table.sd-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: visible;
-}
-
-/* Matrix 셀 기본 스타일 */
-.sv-matrix__cell,
-.sd-matrix__cell,
-.sv-table__cell,
-.sd-table__cell {
-  padding: 6px 4px;
-  border: 1px solid #e5e7eb;
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* Matrix 헤더 스타일 */
-.sv-matrix__cell--header,
-.sd-matrix__cell--header {
-  background-color: #f3f4f6 !important;
-  font-weight: 600;
-  color: var(--primary);
-  white-space: pre-line;
-  font-size: 11px !important;
-  line-height: 1.3;
-  padding: 6px 3px;
-  border-bottom: 2px solid #d1d5db;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 10 !important;
-}
-
-/* Matrix 행 레이블 (첫 번째 열) */
-.sv-matrix__cell--row-text,
-.sd-matrix__cell--row-text {
-  text-align: left !important;
-  padding: 6px !important;
-  font-size: 12px !important;
-  line-height: 1.4;
-  font-weight: 400;
-  background-color: #fafafa;
-}
-
-/* Matrix 라디오 버튼 스타일 */
-.sd-matrix .sd-radio,
-.sd-matrix .sd-item,
-.sv-matrix .sv-radio {
+/* 문항 카드 레이아웃(헤더만, 카드 스타일 없음) */
+.survey-card-head {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2px;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
-.sd-matrix .sd-radio__decorator,
-.sv-matrix .sv-radio__decorator {
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50%;
-  border: 2px solid #d1d5db !important;
-  background-color: #ffffff !important;
+/* 미응답 행 음영 (커스텀 설문 매트릭스) - 옅게 */
+.matrix-row-unanswered td {
+  background-color: rgba(140, 85, 232, 0.06) !important;
 }
 
-/* Matrix 라디오 버튼 체크된 상태 */
-.sd-matrix .sd-radio--checked .sd-radio__decorator,
-.sv-matrix .sv-radio--checked .sv-radio__decorator,
-.sd-matrix .sd-item--checked .sd-radio__decorator,
-.sv-matrix .sv-item--checked .sv-radio__decorator {
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
+/* 매트릭스 라디오: 체크박스 스타일(내부 점 없음) */
+.matrix-radio {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  cursor: pointer;
+  flex-shrink: 0;
 }
-
-/* Matrix 라디오 버튼 체크 마크 */
-.sd-matrix .sd-radio__svg,
-.sv-matrix .sv-radio__svg {
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-  width: 10px;
-  height: 10px;
+.matrix-radio:checked {
+  background: var(--secondary);
+  border-color: var(--secondary);
 }
-
-/* 모바일에서 터치 영역 확보 */
-@media (max-width: 768px) {
-  .sv-root-modern .sv-selectbase__item {
-    padding: 10px 14px;
-    min-height: 40px;
-  }
-
-  .sv-root-modern .sv-button {
-    min-height: 44px;
-  }
-
-  /* 모바일 헤더 폰트 축소 */
-  .sv-matrix__cell--header,
-  .sd-matrix__cell--header {
-    font-size: 8px !important;
-    padding: 4px 2px !important;
-    line-height: 1.2 !important;
-  }
-
-  /* 모바일 행 텍스트 폰트 축소 */
-  .sv-matrix__cell--row-text,
-  .sd-matrix__cell--row-text {
-    font-size: 9px !important;
-    padding: 3px !important;
-    line-height: 1.3 !important;
-  }
-
-  /* 모바일 라디오 버튼 크기 축소 */
-  .sd-matrix .sd-radio__decorator,
-  .sv-matrix .sv-radio__decorator {
-    width: 14px !important;
-    height: 14px !important;
-  }
-
-  /* 모바일 페이지 타이틀 */
-  .sv-root-modern .sv-page__title,
-  .sd-page__title {
-    font-size: 11px !important;
-    margin-bottom: 0.3rem !important;
-  }
-
-  /* 모바일 질문 타이틀 */
-  .sv-root-modern .sv-question__title,
-  .sd-question__title {
-    font-size: 10px !important;
-    line-height: 1.3 !important;
-  }
+.matrix-radio:focus {
+  outline: 2px solid var(--secondary);
+  outline-offset: 1px;
 }

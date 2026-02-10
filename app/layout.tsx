@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR, Nanum_Gothic } from "next/font/google";
 import "./globals.css";
+import { SurveySectionProvider } from "@/contexts/SurveySectionContext";
 import Header from "@/components/layout/Header";
 
 const notoSansKR = Noto_Sans_KR({
@@ -36,10 +37,14 @@ export default function RootLayout({
       <body
         className={`${notoSansKR.variable} ${nanumGothic.variable} antialiased`}
       >
-        <Header />
-        <main style={{ backgroundColor: '#E0DDD8' }}>
-          {children}
-        </main>
+        <SurveySectionProvider>
+          <main style={{ backgroundColor: 'var(--bg-main)' }}>
+            <Header />
+            <div className="min-h-[60vh] flex-1" style={{ backgroundColor: 'var(--bg-main)' }}>
+              {children}
+            </div>
+          </main>
+        </SurveySectionProvider>
       </body>
     </html>
   );
