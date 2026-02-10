@@ -35,9 +35,10 @@ body {
 main {
   margin: 0;
   padding: 0;
-  width: 100vw;
+  width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* 헤더 폰트 */
@@ -46,9 +47,14 @@ header {
 }
 
 /* SurveyJS 폰트 사이즈 및 폰트 조정 */
-.sv-root-modern {
-  font-size: 13px;
+.sv-root-modern,
+.sd-root-modern {
+  font-size: 11px;
   font-family: var(--font-nanum-gothic), sans-serif;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
 }
 
 /* SurveyJS 내부 여백 줄이기 - 카드 중첩 제거 */
@@ -56,7 +62,7 @@ header {
 .sd-root-modern .sd-question,
 .sd-element,
 .sd-question {
-  padding: 4px 0 !important;
+  padding: 4px 8px !important;
   margin-bottom: 4px !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -108,15 +114,15 @@ header {
 
 .sd-element__content,
 .sd-question__content {
-  padding: 0 !important;
+  padding: 0 8px !important;
   margin: 0 !important;
 }
 
-/* 질문 헤더 영역 여백 최소화 */
+/* 질문 헤더 영역 여백 */
 .sd-element__header,
 .sd-question__header,
 .sv-root-modern .sv-question__header {
-  padding: 0 0 4px 0 !important;
+  padding: 0 8px 4px 8px !important;
   margin: 0 !important;
 }
 
@@ -126,11 +132,11 @@ header {
   display: none !important;
 }
 
-/* 전체 래퍼 패딩 제거 */
+/* 전체 래퍼 패딩 */
 .sd-body__page,
 .sd-page__row,
 .sv-root-modern .sv-row {
-  padding: 0 !important;
+  padding: 0 4px !important;
   margin: 0 !important;
 }
 
@@ -170,6 +176,55 @@ button[type="button"].sd-btn:hover {
   background-color: #152a4a !important;
   border-color: #152a4a !important;
   box-shadow: 0 4px 8px rgba(30, 58, 99, 0.4) !important;
+}
+
+/* 네비게이션 버튼 가운데 정렬 */
+.sd-action-bar,
+.sv-footer,
+.sd-footer,
+.sv-root-modern .sv-footer,
+.sd-root-modern .sd-footer,
+.sd-body__navigation {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  flex-wrap: wrap !important;
+}
+
+/* 네비게이션 버튼 통일 크기 - 뷰포트 25% */
+.sd-body__navigation .sd-btn,
+.sd-navigation__prev-btn,
+.sd-navigation__next-btn,
+.sd-navigation__complete-btn {
+  width: 25vw !important;
+  min-width: 25vw !important;
+  max-width: 25vw !important;
+  padding: 10px 0 !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  flex: none !important;
+}
+
+/* 이전 섹션으로 버튼 - 연한 스타일 (높은 우선순위) */
+.sd-navigation__prev-btn,
+.sd-navigation__prev-btn.sd-btn,
+button.sd-navigation__prev-btn {
+  background-color: #e8edf3 !important;
+  color: var(--primary) !important;
+  border: 1px solid #c5cdd8 !important;
+  box-shadow: none !important;
+}
+
+.sd-navigation__prev-btn:hover,
+.sd-navigation__prev-btn.sd-btn:hover,
+button.sd-navigation__prev-btn:hover {
+  background-color: #d8dfe8 !important;
+  color: var(--primary) !important;
+  border-color: #b0bac8 !important;
+  box-shadow: none !important;
 }
 
 .sv-root-modern .sv-progress__bar {
@@ -289,14 +344,14 @@ input[type="radio"]:checked + .sd-radio__decorator,
 }
 
 .sv-root-modern .sv-question__title {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
   font-family: var(--font-noto-sans), sans-serif;
   font-weight: 500;
 }
 
 .sv-root-modern .sv-page__title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   margin-bottom: 0.5rem;
   margin-top: 0;
@@ -306,23 +361,23 @@ input[type="radio"]:checked + .sd-radio__decorator,
 }
 
 .sv-root-modern .sv-selectbase__item {
-  padding: 6px 10px;
-  font-size: 13px;
-  margin-bottom: 4px;
+  padding: 5px 8px;
+  font-size: 11px;
+  margin-bottom: 3px;
 }
 
 .sv-root-modern .sv-button {
-  padding: 12px 24px;
-  font-size: 15px;
+  padding: 10px 20px;
+  font-size: 11px;
 }
 
 .sv-root-modern .sv-comment {
-  font-size: 13px;
-  padding: 8px;
+  font-size: 11px;
+  padding: 6px;
 }
 
 .sv-root-modern .sv-question__description {
-  font-size: 12px;
+  font-size: 10px;
 }
 
 /* Matrix 테이블 스타일링 */

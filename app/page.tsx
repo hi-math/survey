@@ -170,18 +170,10 @@ export default function Home() {
       "colorPalette": "light"
     });
 
-    // 모바일에서도 매트릭스 테이블 유지 - isMobile을 인스턴스에서 false로 고정
+    // 모바일에서도 매트릭스 테이블 유지 - setIsMobile을 no-op으로 오버라이드
     if (typeof window !== 'undefined') {
-      Object.defineProperty(surveyModel, 'isMobile', {
-        get: () => false,
-        configurable: true
-      });
-      surveyModel.getAllQuestions().forEach((q: any) => {
-        Object.defineProperty(q, 'isMobile', {
-          get: () => false,
-          configurable: true
-        });
-      });
+      (surveyModel as any).setIsMobile = () => {};
+      (surveyModel as any).processResponsiveness = () => {};
     }
 
     surveyModel.onComplete.add(async (sender) => {
@@ -226,8 +218,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ padding: '8px 12px' }}>
-      <div className="w-full bg-white" style={{ padding: '12px 8px' }}>
+    <div className="min-h-screen" style={{ padding: '8px', boxSizing: 'border-box', width: '100%' }}>
+      <div className="w-full bg-white" style={{ padding: '8px', boxSizing: 'border-box', overflow: 'hidden' }}>
         <Survey model={survey} />
       </div>
     </div>
