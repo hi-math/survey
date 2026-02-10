@@ -57,6 +57,17 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
     return () => clearTimeout(t);
   }, []);
 
+  // Vercel 등 배포 환경에서 로그인 실패 원인 파악용 (F12 → Console)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    console.log('[구글 로그인] 환경 확인:', {
+      origin: window.location.origin,
+      authDomain설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      projectId설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      apiKey설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    });
+  }, []);
+
   const handleGoogleLogin = async () => {
     if (isInAppBrowser()) return;
     try {
@@ -118,6 +129,19 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
 
   return (
     <div className="min-h-screen p-4 pb-10" style={{ backgroundColor: 'var(--bg-main)' }}>
+      {/* 휴대폰에서도 에러 확인 가능: 상단 고정 오류 배너 (콘솔 없이 확인용) */}
+      {displayError && (
+        <div
+          className="sticky top-0 z-10 mb-4 p-4 rounded-xl text-sm shadow-md"
+          style={{ backgroundColor: 'rgba(239,68,68,0.95)', color: '#fff' }}
+        >
+          <p className="font-semibold m-0 mb-1">로그인 오류</p>
+          <p className="m-0 break-all text-xs">{displayError}</p>
+          <p className="m-0 mt-2 text-xs opacity-90">
+            휴대폰에서는 이 메시지를 캡처해 관리자에게 전달하세요.
+          </p>
+        </div>
+      )}
       <div className="page-frame space-y-4">
         {/* 상단 타이틀: 강조 */}
         <div className="text-center py-2">
@@ -129,16 +153,16 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
           </h1>
         </div>
 
-        {/* 안내 및 개인정보: 구분되는 카드 (짙은 음영, 밝은 텍스트) */}
+        {/* 안내 및 개인정보: 구분되는 카드 */}
         <div
           className="rounded-2xl p-5"
           style={{
-            backgroundColor: 'var(--card-shade)',
-            color: 'var(--card-shade-text)',
+            backgroundColor: 'var(--info-card-bg)',
+            color: 'var(--info-card-text)',
           }}
         >
-          <p className="text-sm leading-relaxed text-center m-0" style={{ color: 'var(--card-shade-text)' }}>
-            강의는 함께 만들어나가는 것입니다. 솔직한 응답을 부탁드립니다. 설문 응답으로 알게 된 개인 정보는 암호화 되어 처리됩니다.
+          <p className="text-sm leading-relaxed text-center m-0" style={{ color: 'var(--info-card-text)' }}>
+            설문 내용을 바탕으로 수업 내용이 결정되니 솔직한 응답을 부탁드립니다. 설문시 수집한 개인정보는 암호화하여 처리하며 설문이외에 용도로 사용되지 않습니다.
           </p>
         </div>
 
@@ -148,8 +172,15 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
             <div className="mb-4 p-3 rounded-xl text-sm space-y-2" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#b91c1c' }}>
               <p className="m-0">{displayError}</p>
               <p className="m-0 text-xs opacity-90">
-                에러 상세: 브라우저에서 <kbd className="px-1 rounded bg-black/10">F12</kbd> → Console 탭에서 &quot;[구글 로그인]&quot; 로그 확인
+                PC: 브라우저 <kbd className="px-1 rounded bg-black/10">F12</kbd> → Console에서 상세 로그 확인
               </p>
+              {typeof window !== 'undefined' && (
+                <p className="m-0 text-xs opacity-90 break-all">
+                  현재 주소: <strong>{window.location.origin}</strong>
+                  <br />
+                  배포 시: Firebase Console → 인증 → 설정 → 승인된 도메인에 위 주소 추가
+                </p>
+              )}
             </div>
           )}
 
