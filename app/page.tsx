@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, User, getRedirectResult } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -10,6 +10,8 @@ import SurveyCompletePage from "@/components/SurveyCompletePage";
 import CustomSurvey from "@/components/survey/CustomSurvey";
 import type { SurveyData } from "@/types/survey";
 
+const AUTH_NULL_GRACE_MS = 2500;
+
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,8 +20,11 @@ export default function Home() {
   const [surveyCompleted, setSurveyCompleted] = useState(false);
   const [initialSurveyData, setInitialSurveyData] = useState<SurveyData | null>(null);
 
+  const pendingNullTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hadUserThisSessionRef = useRef(false);
+
   // Auth Guard 타이밍 해결: getRedirectResult 완료 후에만 onAuthStateChanged 구독.
-  // (리다이렉트 복귀 시 Firebase 세션 복원 전에 "user 없음"으로 판단해 로그인 화면으로 가는 것 방지)
+  // 모바일: "user 있었다가 null"일 때만 유예 시간 적용 (세션 복원/일시적 null로 인한 첫 화면 복귀 방지).
   useEffect(() => {
     if (typeof window === "undefined" || !auth) return;
     setRedirectError(null);
@@ -27,12 +32,36 @@ export default function Home() {
     let unsub: (() => void) | null = null;
     let done = false;
 
+    const clearPendingNull = () => {
+      if (pendingNullTimeoutRef.current) {
+        clearTimeout(pendingNullTimeoutRef.current);
+        pendingNullTimeoutRef.current = null;
+      }
+    };
+
     const subscribeAuth = () => {
       if (unsub) return;
       unsub = onAuthStateChanged(auth, (u) => {
         console.log("[구글 로그인] USER:", u ? `${u.uid}` : "null");
-        setUser(u);
-        setLoading(false);
+        clearPendingNull();
+        if (u) {
+          hadUserThisSessionRef.current = true;
+          setUser(u);
+          setLoading(false);
+          return;
+        }
+        // null: 한 번이라도 user가 있었으면 유예 시간 후 로그인 화면 (모바일 일시적 null 대응)
+        if (hadUserThisSessionRef.current) {
+          pendingNullTimeoutRef.current = setTimeout(() => {
+            pendingNullTimeoutRef.current = null;
+            hadUserThisSessionRef.current = false;
+            setUser(null);
+            setLoading(false);
+          }, AUTH_NULL_GRACE_MS);
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
       });
     };
 
@@ -78,12 +107,12 @@ export default function Home() {
       })
       .finally(() => {
         done = true;
-        // 리다이렉트 처리 끝난 뒤에만 auth 상태 구독 → 로딩 해제. (무한 첫 화면 복귀 방지)
         subscribeAuth();
       });
 
     return () => {
       clearTimeout(timeout);
+      clearPendingNull();
       unsub?.();
     };
   }, []);
