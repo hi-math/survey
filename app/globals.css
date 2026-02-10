@@ -27,21 +27,6 @@
   --font-nanum-gothic: var(--font-nanum-gothic);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-main: #2a1f3d;
-    --card-bg: #3d3252;
-    --shade-bg: #352a48;
-    --header-title: #b8a9d4;
-    --table-header-bg: #3d3252;
-    --checkbox-checked: #a89cc4;
-    --question-bar: #d97a35;
-    --text: #e5e0eb;
-    --text-muted: #a89cc4;
-    --border: #4a3d5c;
-  }
-}
-
 body {
   background: var(--bg-main);
   color: var(--text);

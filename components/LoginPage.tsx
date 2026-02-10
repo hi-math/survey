@@ -96,22 +96,22 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen p-4 pb-10" style={{ backgroundColor: 'var(--bg-main)' }}>
       <div className="page-frame space-y-4">
-        {/* 상단 헤더 카드: 스크린샷 "You Have New Task" 스타일 */}
+        {/* 상단 타이틀 카드: 강조 */}
         <div className="screen-header text-center">
-          <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text)' }}>
+          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: 'var(--text)' }}>
             강의 전 설문
           </h1>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-            강의는 함께 만들어나가는 것입니다. 솔직한 응답을 부탁드립니다.
+        </div>
+
+        {/* 안내 및 개인정보 카드 */}
+        <div className="card">
+          <p className="text-sm leading-relaxed text-center" style={{ color: 'var(--text)' }}>
+            강의는 함께 만들어나가는 것입니다. 솔직한 응답을 부탁드립니다. 설문 응답으로 알게 된 개인 정보는 암호화 되어 처리됩니다.
           </p>
         </div>
 
         {/* 로그인 카드 */}
         <div className="card">
-          <p className="text-sm mb-4" style={{ color: 'var(--text)' }}>
-            설문 응답으로 알게 된 개인 정보는 절대 유출하지 않겠습니다.
-          </p>
-
           {error && (
             <div className="mb-4 p-3 rounded-xl text-sm" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#b91c1c' }}>
               {error}
