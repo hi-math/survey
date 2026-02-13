@@ -97,16 +97,6 @@ export default function SurveyCompletePage({ scoreResult, onEditSurvey, onStartO
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text)' }}>
                 {scoreResult.description}
               </p>
-
-              {/* 점수 구간 범례 */}
-              <div className="mt-4 pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-                <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>점수 구간 안내</p>
-                <div className="flex flex-col gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
-                  <span>🔬 30점 이상: 과학에 대한 자신감 뿜뿜형</span>
-                  <span>🌱 20~29점: 과학에 대한 관심 친화형</span>
-                  <span>🚀 19점 이하: 과학은 아직은 가까이 하기엔 너무 먼 당신형</span>
-                </div>
-              </div>
             </div>
           )}
 

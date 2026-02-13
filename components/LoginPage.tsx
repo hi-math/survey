@@ -36,7 +36,14 @@ interface LoginPageProps {
   onClearError?: () => void;
 }
 
+const COURSE_OPTIONS = [
+  { value: 'history', label: '인물로 보는 과학의 역사' },
+  { value: 'thinking', label: '과학적 사고와 상상력' },
+  { value: 'other', label: '기타' },
+] as const;
+
 export default function LoginPage({ initialError = null, onClearError }: LoginPageProps) {
+  const [course, setCourse] = useState<string>(COURSE_OPTIONS[0].value);
   const [showManualLogin, setShowManualLogin] = useState(false);
   const [studentId, setStudentId] = useState('');
   const [name, setName] = useState('');
@@ -59,11 +66,13 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       .then(async (result) => {
         if (result?.user) {
           console.log('[구글 로그인] redirect 성공:', result.user.uid);
+          const courseLabel = COURSE_OPTIONS.find((o) => o.value === course)?.label ?? course;
           await setDoc(doc(db, 'users', result.user.uid), {
             email: result.user.email,
             displayName: result.user.displayName,
             photoURL: result.user.photoURL,
             loginMethod: 'google',
+            course: courseLabel,
             createdAt: new Date(),
           });
         }
@@ -100,11 +109,13 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       // 모든 환경에서 signInWithPopup 사용 (signInWithRedirect는 최신 브라우저에서 third-party cookie 차단으로 실패함)
       const result = await signInWithPopup(auth, googleProvider);
       if (result?.user) {
+        const courseLabel = COURSE_OPTIONS.find((o) => o.value === course)?.label ?? course;
         await setDoc(doc(db, 'users', result.user.uid), {
           email: result.user.email,
           displayName: result.user.displayName,
           photoURL: result.user.photoURL,
           loginMethod: 'google',
+          course: courseLabel,
           createdAt: new Date(),
         });
       }
@@ -142,10 +153,12 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       setError('');
       await setPersistence(auth, browserSessionPersistence);
       const result = await signInAnonymously(auth);
+      const courseLabel = COURSE_OPTIONS.find((o) => o.value === course)?.label ?? course;
       await setDoc(doc(db, 'users', result.user.uid), {
         studentId: studentId.trim(),
         displayName: name.trim(),
         loginMethod: 'manual',
+        course: courseLabel,
         createdAt: new Date(),
       });
     } catch (err) {
@@ -182,21 +195,49 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
           </h1>
         </div>
 
-        {/* 안내 및 개인정보: 구분되는 카드 */}
+        {/* 안내 및 개인정보: 구분되는 카드 (보라 톤) */}
         <div
           className="rounded-2xl p-5"
           style={{
-            backgroundColor: 'var(--info-card-bg)',
-            color: 'var(--info-card-text)',
+            backgroundColor: '#5D4171',
+            color: '#f0eafc',
           }}
         >
-          <p className="text-sm leading-relaxed text-center m-0" style={{ color: 'var(--info-card-text)' }}>
+          <p className="text-sm leading-relaxed text-center m-0" style={{ color: '#f0eafc' }}>
             설문 내용을 바탕으로 수업 내용이 결정되니 솔직한 응답을 부탁드립니다. 설문시 수집한 개인정보는 암호화하여 처리하며 설문이외에 용도로 사용되지 않습니다.
           </p>
         </div>
 
         {/* 로그인 카드 */}
         <div className="card">
+          {/* 강의 선택 토글 */}
+          <div className="mb-5">
+            <p className="text-sm font-medium mb-3" style={{ color: 'var(--text)' }}>수강 강의</p>
+            <div className="flex flex-col gap-2">
+              {COURSE_OPTIONS.map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex items-center gap-3 cursor-pointer rounded-xl p-3 border-2 transition-colors hover:bg-black/5"
+                  style={{
+                    borderColor: course === opt.value ? 'var(--secondary)' : 'var(--border)',
+                    backgroundColor: course === opt.value ? 'rgba(140,85,232,0.08)' : 'transparent',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="course"
+                    value={opt.value}
+                    checked={course === opt.value}
+                    onChange={() => setCourse(opt.value)}
+                    className="w-4 h-4"
+                    style={{ accentColor: 'var(--secondary)' }}
+                  />
+                  <span className="text-sm" style={{ color: 'var(--text)' }}>{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {displayError && (
             <div className="mb-4 p-3 rounded-xl text-sm space-y-2" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#b91c1c' }}>
               <p className="m-0">{displayError}</p>

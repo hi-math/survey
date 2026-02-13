@@ -8,15 +8,20 @@ import SurveySection2 from "./SurveySection2";
 
 interface CustomSurveyProps {
   initialData?: SurveyData | null;
+  /** 구글 로그인 시 true → 설문 맨 앞에 학번/이름 수집 페이지 표시 */
+  collectStudentInfo?: boolean;
   onSubmit: (data: SurveyData) => Promise<void>;
 }
 
 export default function CustomSurvey({
   initialData,
+  collectStudentInfo = false,
   onSubmit,
 }: CustomSurveyProps) {
   const [page, setPage] = useState(0);
   const [data, setData] = useState<SurveyData>(() => ({
+    studentId: initialData?.studentId ?? "",
+    displayName: initialData?.displayName ?? "",
     reason: initialData?.reason ?? [],
     reasonOther: initialData?.reasonOther ?? "",
     expectation: initialData?.expectation ?? [],
@@ -38,6 +43,15 @@ export default function CustomSurvey({
       return next;
     });
   }, []);
+
+  const validateStudentInfo = (): boolean => {
+    if (!collectStudentInfo) return true;
+    const err: Record<string, string> = {};
+    if (!(data.studentId ?? "").trim()) err.studentId = "학번을 입력해 주세요.";
+    if (!(data.displayName ?? "").trim()) err.displayName = "이름을 입력해 주세요.";
+    setErrors((prev) => ({ ...prev, ...err }));
+    return Object.keys(err).length === 0;
+  };
 
   const validateSection1 = (): boolean => {
     const err: Record<string, string> = {};
@@ -72,11 +86,15 @@ export default function CustomSurvey({
   };
 
   const handleNext = () => {
-    if (page === 0 && !validateSection1()) return;
-    setPage(1);
+    if (collectStudentInfo && page === 0) {
+      if (!validateStudentInfo()) return;
+    } else if ((collectStudentInfo && page === 1) || (!collectStudentInfo && page === 0)) {
+      if (!validateSection1()) return;
+    }
+    setPage((p) => p + 1);
   };
 
-  const handlePrev = () => setPage(0);
+  const handlePrev = () => setPage((p) => p - 1);
 
   const handleSubmit = async () => {
     if (!validateSection2()) return;
@@ -88,16 +106,60 @@ export default function CustomSurvey({
     }
   };
 
+  const isStudentInfoPage = collectStudentInfo && page === 0;
+  const isSection1Page = (collectStudentInfo && page === 1) || (!collectStudentInfo && page === 0);
+  const isSection2Page = (collectStudentInfo && page === 2) || (!collectStudentInfo && page === 1);
+  const isLastPage = isSection2Page;
+
   return (
     <div className="page-frame pb-10">
-      {page === 0 && (
+      {isStudentInfoPage && (
+        <div className="space-y-4">
+          <p className="text-sm font-medium px-1 mb-2" style={{ color: "var(--text-muted)" }}>
+            설문 진행을 위해 학번과 이름을 입력해 주세요.
+          </p>
+          <div className="survey-question">
+            <div className="survey-question-bar">학번</div>
+            <div className="survey-card-head">
+              <input
+                type="text"
+                value={data.studentId ?? ""}
+                onChange={(e) => updateData({ studentId: e.target.value })}
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--card-bg)" }}
+                className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
+                placeholder="학번을 입력하세요"
+              />
+              {errors.studentId && (
+                <p className="text-sm mt-1" style={{ color: "#b91c1c" }}>{errors.studentId}</p>
+              )}
+            </div>
+          </div>
+          <div className="survey-question">
+            <div className="survey-question-bar">이름</div>
+            <div className="survey-card-head">
+              <input
+                type="text"
+                value={data.displayName ?? ""}
+                onChange={(e) => updateData({ displayName: e.target.value })}
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--card-bg)" }}
+                className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
+                placeholder="이름을 입력하세요"
+              />
+              {errors.displayName && (
+                <p className="text-sm mt-1" style={{ color: "#b91c1c" }}>{errors.displayName}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {isSection1Page && (
         <SurveySection1
           data={data}
           onChange={updateData}
           errors={errors}
         />
       )}
-      {page === 1 && (
+      {isSection2Page && (
         <SurveySection2
           data={data}
           onChange={updateData}
@@ -107,7 +169,7 @@ export default function CustomSurvey({
 
       {/* 하단 버튼 영역: 스크린샷처럼 큰 오렌지 버튼 + 아이콘 */}
       <div className="flex gap-3 justify-center mt-8 flex-wrap">
-        {page === 1 ? (
+        {isLastPage ? (
           <>
             <button
               type="button"
