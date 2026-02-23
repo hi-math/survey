@@ -95,7 +95,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return <LoginPage initialError={loginError} onClearError={() => setLoginError(null)} />;
+    return <LoginPage onClearError={() => setLoginError(null)} />;
   }
 
   if (needsUserInfo) {

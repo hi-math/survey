@@ -32,7 +32,6 @@ const openExternalBrowser = (silent = false) => {
 };
 
 interface LoginPageProps {
-  initialError?: string | null;
   onClearError?: () => void;
 }
 
@@ -42,15 +41,14 @@ const COURSE_OPTIONS = [
   { value: 'other', label: '기타' },
 ] as const;
 
-export default function LoginPage({ initialError = null, onClearError }: LoginPageProps) {
+export default function LoginPage({ onClearError }: LoginPageProps) {
   const [course, setCourse] = useState<string>(COURSE_OPTIONS[0].value);
   const [showManualLogin, setShowManualLogin] = useState(false);
   const [studentId, setStudentId] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const displayError = error || initialError || '';
+  const [loginError, setLoginError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ studentId?: boolean; name?: boolean }>({});
 
   // 인앱 브라우저(카카오톡 등)에서는 버튼 없이 자동으로 외부 브라우저 열기 시도
   useEffect(() => {
@@ -82,31 +80,19 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
         const message = err instanceof Error ? err.message : JSON.stringify(err);
         console.error('[구글 로그인] redirect 결과 오류:', { code, message });
         if (code && code !== 'auth/popup-closed-by-user') {
-          setError(`구글 로그인 실패. [${code}] ${message}`);
+          setLoginError(`구글 로그인 실패. [${code}]`);
         }
       });
-  }, []);
-
-  // Vercel 등 배포 환경에서 로그인 실패 원인 파악용 (F12 → Console)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    console.log('[구글 로그인] 환경 확인:', {
-      origin: window.location.origin,
-      authDomain설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-      projectId설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      apiKey설정됨: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    });
   }, []);
 
   const handleGoogleLogin = async () => {
     if (isInAppBrowser()) return;
     try {
       setIsLoading(true);
-      setError('');
+      setLoginError('');
       onClearError?.();
       await setPersistence(auth, browserSessionPersistence);
 
-      // 모든 환경에서 signInWithPopup 사용 (signInWithRedirect는 최신 브라우저에서 third-party cookie 차단으로 실패함)
       const result = await signInWithPopup(auth, googleProvider);
       if (result?.user) {
         const courseLabel = COURSE_OPTIONS.find((o) => o.value === course)?.label ?? course;
@@ -121,10 +107,8 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       }
     } catch (err: unknown) {
       const code = err && typeof err === 'object' && 'code' in err ? (err as { code?: string }).code : undefined;
-      const message = err instanceof Error ? err.message : JSON.stringify(err);
-      console.error('[구글 로그인] 오류:', { err, code, message });
+      console.error('[구글 로그인] 오류:', err);
 
-      // 팝업 차단 또는 팝업 관련 실패 시 redirect 방식으로 폴백
       if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         console.log('[구글 로그인] 팝업 실패, redirect 방식으로 전환');
         try {
@@ -135,8 +119,7 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
         }
       }
 
-      const detail = code ? `[${code}] ${message}` : message;
-      setError(`구글 로그인 실패. ${detail}`);
+      setLoginError('구글 로그인에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -144,13 +127,16 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
 
   const handleManualLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!studentId.trim() || !name.trim()) {
-      setError('학번과 이름을 모두 입력해주세요.');
+    const errs: { studentId?: boolean; name?: boolean } = {};
+    if (!studentId.trim()) errs.studentId = true;
+    if (!name.trim()) errs.name = true;
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
       return;
     }
     try {
       setIsLoading(true);
-      setError('');
+      setLoginError('');
       await setPersistence(auth, browserSessionPersistence);
       const result = await signInAnonymously(auth);
       const courseLabel = COURSE_OPTIONS.find((o) => o.value === course)?.label ?? course;
@@ -163,7 +149,7 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
       });
     } catch (err) {
       console.error('Manual login error:', err);
-      setError('로그인에 실패했습니다. 다시 시도해주세요.');
+      setLoginError('로그인에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -171,21 +157,7 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
 
   return (
     <div className="min-h-screen p-4 pb-10" style={{ backgroundColor: 'var(--bg-main)' }}>
-      {/* 휴대폰에서도 에러 확인 가능: 상단 고정 오류 배너 (콘솔 없이 확인용) */}
-      {displayError && (
-        <div
-          className="sticky top-0 z-10 mb-4 p-4 rounded-xl text-sm shadow-md"
-          style={{ backgroundColor: 'rgba(239,68,68,0.95)', color: '#fff' }}
-        >
-          <p className="font-semibold m-0 mb-1">로그인 오류</p>
-          <p className="m-0 break-all text-xs">{displayError}</p>
-          <p className="m-0 mt-2 text-xs opacity-90">
-            휴대폰에서는 이 메시지를 캡처해 관리자에게 전달하세요.
-          </p>
-        </div>
-      )}
       <div className="page-frame space-y-4">
-        {/* 상단 타이틀: 강조 */}
         <div className="text-center py-2">
           <h1
             className="text-3xl font-black tracking-tight"
@@ -195,22 +167,16 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
           </h1>
         </div>
 
-        {/* 안내 및 개인정보: 구분되는 카드 (보라 톤) */}
         <div
           className="rounded-2xl p-5"
-          style={{
-            backgroundColor: '#5D4171',
-            color: '#f0eafc',
-          }}
+          style={{ backgroundColor: '#5D4171', color: '#f0eafc' }}
         >
           <p className="text-sm leading-relaxed text-center m-0" style={{ color: '#f0eafc' }}>
             설문 내용을 바탕으로 수업 내용이 결정되니 솔직한 응답을 부탁드립니다. 설문시 수집한 개인정보는 암호화하여 처리하며 설문이외에 용도로 사용되지 않습니다.
           </p>
         </div>
 
-        {/* 로그인 카드 */}
         <div className="card">
-          {/* 강의 선택 토글 */}
           <div className="mb-5">
             <p className="text-sm font-medium mb-3" style={{ color: 'var(--text)' }}>수강 강의</p>
             <div className="flex flex-col gap-2">
@@ -238,20 +204,8 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
             </div>
           </div>
 
-          {displayError && (
-            <div className="mb-4 p-3 rounded-xl text-sm space-y-2" style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#b91c1c' }}>
-              <p className="m-0">{displayError}</p>
-              <p className="m-0 text-xs opacity-90">
-                PC: 브라우저 <kbd className="px-1 rounded bg-black/10">F12</kbd> → Console에서 상세 로그 확인
-              </p>
-              {typeof window !== 'undefined' && (
-                <p className="m-0 text-xs opacity-90 break-all">
-                  현재 주소: <strong>{window.location.origin}</strong>
-                  <br />
-                  배포 시: Firebase Console → 인증 → 설정 → 승인된 도메인에 위 주소 추가
-                </p>
-              )}
-            </div>
+          {loginError && (
+            <p className="mb-3 text-xs" style={{ color: '#ef4444' }}>{loginError}</p>
           )}
 
           {!showManualLogin ? (
@@ -312,12 +266,18 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
                   type="text"
                   id="studentId"
                   value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
-                  style={{ borderColor: 'var(--border)', backgroundColor: 'var(--card-bg)' }}
+                  onChange={(e) => { setStudentId(e.target.value); setFieldErrors((p) => ({ ...p, studentId: false })); }}
+                  style={{
+                    borderColor: fieldErrors.studentId ? '#f87171' : 'var(--border)',
+                    backgroundColor: fieldErrors.studentId ? 'rgba(254,226,226,0.4)' : 'var(--card-bg)',
+                  }}
                   className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
                   placeholder="학번을 입력하세요"
                   disabled={isLoading}
                 />
+                {fieldErrors.studentId && (
+                  <p className="text-xs mt-1" style={{ color: '#ef4444' }}>학번을 입력하세요</p>
+                )}
               </div>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: 'var(--text)' }}>이름</label>
@@ -325,17 +285,23 @@ export default function LoginPage({ initialError = null, onClearError }: LoginPa
                   type="text"
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  style={{ borderColor: 'var(--border)', backgroundColor: 'var(--card-bg)' }}
+                  onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: false })); }}
+                  style={{
+                    borderColor: fieldErrors.name ? '#f87171' : 'var(--border)',
+                    backgroundColor: fieldErrors.name ? 'rgba(254,226,226,0.4)' : 'var(--card-bg)',
+                  }}
                   className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
                   placeholder="이름을 입력하세요"
                   disabled={isLoading}
                 />
+                {fieldErrors.name && (
+                  <p className="text-xs mt-1" style={{ color: '#ef4444' }}>이름을 입력하세요</p>
+                )}
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => { setShowManualLogin(false); setError(''); setStudentId(''); setName(''); }}
+                  onClick={() => { setShowManualLogin(false); setLoginError(''); setFieldErrors({}); setStudentId(''); setName(''); }}
                   className="flex-1 font-semibold py-3 px-6 rounded-xl border-2 transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{ borderColor: 'var(--secondary)', color: 'var(--secondary)', backgroundColor: 'var(--card-bg)' }}
                   disabled={isLoading}
