@@ -125,12 +125,15 @@ export default function CustomSurvey({
                 type="text"
                 value={data.studentId ?? ""}
                 onChange={(e) => updateData({ studentId: e.target.value })}
-                style={{ borderColor: "var(--border)", backgroundColor: "var(--card-bg)" }}
+                style={{
+                  borderColor: errors.studentId ? "#f87171" : "var(--border)",
+                  backgroundColor: errors.studentId ? "rgba(254,226,226,0.4)" : "var(--card-bg)",
+                }}
                 className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
                 placeholder="학번을 입력하세요"
               />
               {errors.studentId && (
-                <p className="text-sm mt-1" style={{ color: "#b91c1c" }}>{errors.studentId}</p>
+                <p className="text-xs mt-1" style={{ color: "#ef4444" }}>학번을 입력하세요</p>
               )}
             </div>
           </div>
@@ -141,12 +144,15 @@ export default function CustomSurvey({
                 type="text"
                 value={data.displayName ?? ""}
                 onChange={(e) => updateData({ displayName: e.target.value })}
-                style={{ borderColor: "var(--border)", backgroundColor: "var(--card-bg)" }}
+                style={{
+                  borderColor: errors.displayName ? "#f87171" : "var(--border)",
+                  backgroundColor: errors.displayName ? "rgba(254,226,226,0.4)" : "var(--card-bg)",
+                }}
                 className="w-full px-4 py-3 border-2 rounded-xl outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--secondary)]"
                 placeholder="이름을 입력하세요"
               />
               {errors.displayName && (
-                <p className="text-sm mt-1" style={{ color: "#b91c1c" }}>{errors.displayName}</p>
+                <p className="text-xs mt-1" style={{ color: "#ef4444" }}>이름을 입력하세요</p>
               )}
             </div>
           </div>
