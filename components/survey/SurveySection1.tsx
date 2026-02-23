@@ -75,7 +75,10 @@ export default function SurveySection1({
                       const next = hasOther
                         ? current.filter((v) => v !== "other")
                         : [...current, "other"];
-                      onChange({ [q.name]: next });
+                      onChange({
+                        [q.name]: next,
+                        ...(hasOther ? { [`${q.name}Other`]: "" } : {}),
+                      });
                     }}
                     className="mt-0.5 rounded border-2 w-5 h-5 flex-shrink-0"
                     style={{ borderColor: "var(--border)" }}
@@ -92,7 +95,10 @@ export default function SurveySection1({
                       } as Partial<SurveyData>)
                     }
                     placeholder={q.otherPlaceholder ?? ""}
-                    className="flex-1 min-w-[140px] rounded-xl border-2 px-3 py-2 text-sm"
+                    disabled={
+                      !((data[q.name as keyof SurveyData] as string[] | undefined)?.includes("other") ?? false)
+                    }
+                    className="flex-1 min-w-[140px] rounded-xl border-2 px-3 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
                       borderColor: "var(--border)",
                       background: "var(--card-bg)",

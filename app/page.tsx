@@ -20,6 +20,7 @@ export default function Home() {
   const [surveyCompleted, setSurveyCompleted] = useState(false);
   const [initialSurveyData, setInitialSurveyData] = useState<SurveyData | null>(null);
   const [scoreResult, setScoreResult] = useState<ScoreResult | null>(null);
+  const [savedUserInfo, setSavedUserInfo] = useState<{ displayName?: string; studentId?: string }>({});
 
   // signInWithPopup 방식이므로 onAuthStateChanged만으로 충분
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function Home() {
         const data = snap.exists() ? snap.data() : null;
         setNeedsUserInfo(!snap.exists() || !data?.displayName);
         setUserLoginMethod(data?.loginMethod === "manual" ? "manual" : "google");
+        setSavedUserInfo({ displayName: data?.displayName, studentId: data?.studentId });
       } catch {
         setNeedsUserInfo(true);
         setUserLoginMethod(null);
@@ -67,6 +69,8 @@ export default function Home() {
       scoreTotal: result.total,
       scoreGrade: result.grade,
       ...data,
+      displayName: data.displayName?.trim() || savedUserInfo.displayName || "",
+      studentId: data.studentId?.trim() || savedUserInfo.studentId || "",
     });
     setSurveyCompleted(true);
   };
